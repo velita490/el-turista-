@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turismo y Gastronomía Dominicana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .top-header {
+            background: linear-gradient(to right, #002D62, #FFFFFF, #CE1126);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .top-header h1 {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.5em;
+        }
+
+        .nav-bar {
+            background-color: #002D62;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-bar a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #CE1126;
+            transition: width 0.3s ease;
+        }
+
+        .nav-bar a:hover::after {
+            width: 100%;
+        }
+
+        .nav-bar a.active {
+            background-color: #CE1126;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tourist-spots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .tourist-spot {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease;
+            cursor: pointer;
+        }
+
+        .tourist-spot:hover {
+            transform: translateY(-10px);
+        }
+
+        .tourist-spot img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .spot-content {
+            padding: 20px;
+        }
+
+        .spot-title {
+            font-size: 1.8em;
+            color: #002D62;
+            margin-bottom: 15px;
+        }
+
+        .temperature {
+            color: #CE1126;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .location {
+            color: #002D62;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .site-details, .recipe-details {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .site-details.active, .recipe-details.active {
+            display: block;
+        }
+
+        .details-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            background: #002D62;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #CE1126;
+        }
+
+        .details-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .recipe-ingredients {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .recipe-steps {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .top-header img {
+                width: 60px;
+            }
+
+            .top-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="top-header">
+        <img src="logo.png" alt="" class="logo" onclick="scrollToTop()">
+        <h1>Turismo y Gastronomía Dominicana</h1>
+    </header>
+
+    <nav class="nav-bar">
+        <a onclick="showSection('recomendaciones')" class="active">Recomendaciones Turísticas</a>
+        <a onclick="showSection('municipios')">Municipios de R.D</a>
+        <a onclick="showSection('recetas')">Recetas</a>
+    </nav>
+
+    <div class="main-content">
+        <!-- Sección de Recomendaciones Turísticas -->
+        <section id="recomendaciones" class="section active">
+            <div class="tourist-spots-grid">
+                <div class="tourist-spot" onclick="showSiteDetails('sitio1')">
+                    <img src="playa.jpg" alt="Playa Bávaro">
+                    <div class="spot-content">
+                        <h2 class="spot-title">Playa Bávaro</h2>
+                        <p class="temperature">28°C</p>
+                        <p class="location">Punta Cana, La Altagracia</p>
+                    </div>
+                </div>
+                <!-- Más spots turísticos aquí -->
+            </div>
+        </section>
+
+        <!-- Sección de Recetas -->
+        <section id="recetas" class="section">
+            <div class="tourist-spots-grid">
+                <div class="tourist-spot" onclick="showRecipeDetails('receta1')">
+                    <img src="sancocho.jpg" alt="Sancocho Dominicano">
+                    <div class="spot-content">
+                        <h2  class="spot-title">Sancocho Dominicano</h2>
+                        <p class="temperature">Tiempo: 2 horas</p>
+                        <p class="location">Plato Principal</p>
+                    </div>
+                </div>
+                <div class="tourist-spot" onclick="showRecipeDetails('receta2')">
+                    <img src="mangú.jpg" alt="Mangú con los Tres Golpes">
+                    <div class="spot-content">
+                        <h2 class="spot-title">Mangú con los Tres Golpes</h2>
+                        <p class="temperature">Tiempo: 45 minutos</p>
+                        <p class="location">Desayuno Típico</p>
+                    </div>
+                </div>
+                <!-- Más recetas aquí -->
+            </div>
+        </section>
+
+        <!-- Detalles de los sitios turísticos -->
+        <div id="sitio1" class="site-details">
+            <div class="details-header">
+                <button class="back-button" onclick="backToSpots()">← Volver</button>
+                <h2>Playa Bávaro</h2>
+            </div>
+
+            <div class="details-layout">
+                <div class="main-image-container">
+                    <img src="playa-grande.jpg" alt="Playa Bávaro" class="main-image">
+                </div>
+
+                <div class="description-container">
+                    <h3>Sobre Playa Bávaro</h3>
+                    <p>Descripción detallada del lugar...</p>
+                </div>
+
+                <div class="map-container">
+                    <img src="mapa.jpg" alt="Ubicación" class="map-image" 
+                         onclick="window.open('https://maps.google.com/?q=Playa+Bavaro')">
+                    <div class="map-orientation">
+                        <h4>Orientación</h4>
+                        <p>Norte: Océano Atlántico</p>
+                        <p>Sur: Ciudad de Punta Cana</p>
+                        <p>Este: Playa El Cortecito</p>
+                        <p>Oeste: Aeropuerto Internacional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles de las recetas -->
+        <div id="receta1" class="recipe-details">
+            <div class="details-header">
+                <button class="back-button" onclick="backToRecipes()">← Volver</button>
+                <h2>Sancocho Dominicano</h2>
+            </div>
+
+            <div class="details-layout">
+                <div class="main-image-container">
+                    <img src="sancocho-grande.jpg" alt="Sancocho Dominicano" class="main-image">
+                </div>
+
+                <div class="recipe-ingredients">
+                    <h3>Ingredientes</h3>
+                    <ul>
+                        <li>Plátano verde</li>
+                        <li>Yuca</li>
+                        <li>Ñame</li>
+                        <!-- Más ingredientes... -->
+                    </ul>
+                </div>
+
+                <div class="recipe-steps">
+                    <h3>Preparación</h3>
+                    <ol>
+                        <li>Paso 1...</li>
+                        <li>Paso 2...</li>
+                        <!-- Más pasos... -->
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            const sections = document.getElementsByClassName('section');
+            for(let section of sections) {
+                section.classList.remove('active');
+            }
+            
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Actualizar navegación
+            const navLinks = document.querySelectorAll('.nav-bar a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.textContent.toLowerCase().includes(sectionId)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function showSiteDetails(siteId) {
+            document.querySelector('.tourist-spots-grid').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.tourist-spots-grid').style.display = 'none';
+                document.getElementById(siteId).classList.add('active');
+            }, 300);
+        }
+
+        function backToSpots() {
+            const details = document.getElementsByClassName('site-details');
+            for(let detail of details) {
+                detail.classList.remove('active');
+            }
+            document.querySelector('.tourist-spots-grid').style.display = 'grid';
+            setTimeout(() => {
+                document.querySelector('.tourist-spots-grid').style .opacity = '1';
+            }, 100);
+        }
+
+        function showRecipeDetails(recipeId) {
+            document.querySelector('.tourist-spots-grid').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.tourist-spots-grid').style.display = 'none';
+                document.getElementById(recipeId).classList.add('active');
+            }, 300);
+        }
+
+        function backToRecipes() {
+            const details = document.getElementsByClassName('recipe-details');
+            for(let detail of details) {
+                detail.classList.remove('active');
+            }
+            document.querySelector('.tourist-spots-grid').style.display = 'grid';
+            setTimeout(() => {
+                document.querySelector('.tourist-spots-grid').style.opacity = '1';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
